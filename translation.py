@@ -1,16 +1,15 @@
 from googletrans import Translator
-import asyncio
 
-async def translate(text: str):
+def translate(text: str):
   google = Translator()
-  result = await google.translate(text, dest='pt')
+  result = google.translate(text, dest='pt')
   print(result.text)
 
 # TODO: Handle variables name to don't translate
 # TODO: Transform into a exportable function
 # TODO: Format the response
 if __name__ == "__main__":
-  asyncio.run(translate(
+  translate(
     '''<p>Hi {{user.available_name}},</p>
 
 <p>
@@ -20,4 +19,4 @@ if __name__ == "__main__":
 
 <p>
 <a href="{{action_url}}">Please address immediately.</a>
-</p'''))
+</p''')

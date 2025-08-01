@@ -10,3 +10,5 @@ def list_containers():
     print("❌ Error:", error)
   else:
     print("✅ Output:", output)
+
+list_containers()
