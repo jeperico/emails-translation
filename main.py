@@ -57,7 +57,7 @@ def process(folder):
       logger.error(f"❌ Erro ao sobrescrever {filename}: {error}")
       continue
 
-    logger.success(f"🌍 Arquivo {filename} traduzido e sobrescrito com sucesso.")
+    logger.success(f"📄 Arquivo {filename} traduzido e sobrescrito com sucesso.")
 
 
 folders = [
