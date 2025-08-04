@@ -1,4 +1,5 @@
 from conn import client
+from loguru import logger
 
 def list_containers():
   _, stdout, stderr = client.exec_command('sudo ls -l /var/lib/docker/containers')
@@ -7,8 +8,10 @@ def list_containers():
   error = stderr.read().decode().strip()
 
   if error:
-    print("❌ Error:", error)
+    logger.error("Can't get container's uuids:")
+    print(error)
   else:
-    print("✅ Output:", output)
+    logger.success("Here is yours container's uuids")
+    print(output)
 
 list_containers()
