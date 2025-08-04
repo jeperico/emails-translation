@@ -1,26 +1,52 @@
+from dotenv import load_dotenv
+import os
 from conn import client
-# from containers import list_containers
+from translation import translate
 
-# list_containers()
+load_dotenv()
 
-container = '3766b3d37.........'
+container = os.getenv('CONTAINER')
 
-stdin, stdout, stderr = client.exec_command(f'sudo docker exec {container} ls -1 /app/app/views/devise/mailer')
-files = [f.strip() for f in stdout.read().decode().splitlines()]
-error = stderr.read().decode().strip()
-if error:
-  print("❌ Error:", error)
-
-for filename in files:
-  path = f"/app/app/views/devise/mailer/{filename}"
-  print(f"\n-> Processing {filename}")
-  
-  cin, cout, cerr = client.exec_command(f"sudo docker exec {container} cat {path}")
-  original = cout.read().decode()
-  error = cerr.read().decode().strip()
+def process(folder):
+  stdin, stdout, stderr = client.exec_command(f'sudo docker exec {container} ls -1 {folder}')
+  files = [f.strip() for f in stdout.read().decode().splitlines()]
+  error = stderr.read().decode().strip()
   if error:
-    print(f"  ❌ Falha ao ler {filename}:", error)
-    continue
-  print(original)
+    print("\n❌ Error: ", error)
+
+  for filename in files:
+    path = f"{folder}/{filename}"
+    print(f"\n⏳ Processing {filename}")
+    
+    stdin, stdout, stderr = client.exec_command(f"sudo docker exec {container} cat {path}")
+    original = stdout.read().decode()
+    error = stderr.read().decode().strip()
+    if error:
+      print(f"\n❌ Falha ao ler {filename}:", error)
+      continue
+    print(original)
+    
+    if not translate:
+      print('\n📄 Arquivo vazio')
+      continue
+    translated = translate(original)
+    stdin, stdout, stderr = client.exec_command(f"sudo docker exec -i {container} sh -c 'cat > {path}'")
+    stdin.write(translated)
+    stdin.channel.shutdown_write()
+    error = stderr.read().decode().strip()
+    if error:
+      print(f"\n❌ Falha ao sobrescrever {filename}:", error)
+      continue
+    print('\n📄🌍 Arquivo traduzido com sucesso')
+
+
+process('/app/app/views/mailers/team_notifications/automation_notification_mailer')
+process('/app/app/views/devise/mailer')
+process('/app/app/views/mailers/administrator_notifications/account_compliance_mailer')
+process('/app/app/views/mailers/administrator_notifications/account_notification_mailer')
+process('/app/app/views/mailers/administrator_notifications/channel_notifications_mailer')
+process('/app/app/views/mailers/administrator_notifications/integrations_notification_mailer')
+process('/app/app/views/mailers/agent_notifications/conversation_notifications_mailer')
+process('/app/app/views/mailers/conversation_reply_mailer')
 
 client.close()
