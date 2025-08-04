@@ -1,6 +1,7 @@
 # 📘 Guia: Traduzindo todos os emails do chatwoot
 ## Pré-requisitos
 - Python 3.13.x instalado
+- ```make``` instalado
 - Docker e acesso ao container desejado (via Portainer ou CLI)
 
 ## 🛠️ Passo a passo
@@ -15,11 +16,21 @@ Use o make para configurar o ambiente Python (criação do venv e instalação d
 ```bash
 make pysetup
 ```
+Ou
+```bash
+python3 -m venv venv
+pip install --upgrade pip
+pip install -r requirements.txt
+```
 
 3. Liste os containers disponíveis
 Para identificar o container Docker onde a aplicação será executada:
 ```bash
 make runcontainer
+```
+Ou
+```bash
+python .\containers.py
 ```
 Ou acesse o Portainer e copie o UUID do container desejado.
 
@@ -30,4 +41,8 @@ No arquivo .env, defina a variável CONTAINER com o UUID obtido:
 Com tudo pronto, execute:
 ```bash
 make runmain
+```
+Ou
+```bash
+python .\main.py
 ```
