@@ -47,6 +47,9 @@ def process(folder):
       logger.warning(f"⚠️  {filename} aparentemente vazio após leitura. Ignorando.")
       continue
 
+    if original:
+      logger.info(f"📄 Conteúdo original de {filename}:\n{original}")
+
     translated = translate(original)
     stdin, stdout, stderr = client.exec_command(f"sudo docker exec -i {container} sh -c 'cat > {path}'")
     stdin.write(translated)
@@ -70,6 +73,14 @@ folders = [
   '/app/app/views/mailers/conversation_reply_mailer',
   '/app/app/views/mailers/team_notifications/automation_notification_mailer',
 ]
+
+# Grandes ciclos de preço ocorrem a cada 3 anos
+# Bezerro caro (carne vai ficar cara)
+# Bezerro dando dinheiro > Não mata as vacas, procria elas (segurar matriz)
+# Frigorífico compra vaca e boi > menos vaca, aumento no preço da @ boi
+# Boi sendo mais caro, usa mais os bezerros, cai de preço
+# Bezerro barato (carne vai ficar barata)
+# Cria das vacas nn compensam, ent descarta vaca, diminui os bezzeros, aumenta o preço
 
 for folder in folders:
   process(folder)
